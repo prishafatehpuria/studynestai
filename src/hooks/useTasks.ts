@@ -6,7 +6,10 @@ const STORAGE_KEY = 'study-planner-tasks';
 function loadTasks(): Task[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    const tasks = JSON.parse(data) as Task[];
+    // migrate old tasks without priority
+    return tasks.map(t => ({ ...t, priority: t.priority || 'medium' }));
   } catch {
     return [];
   }
@@ -37,7 +40,7 @@ export function useTasks() {
     saveTasks(newTasks);
   }, []);
 
-  const addTask = useCallback((name: string, subject: string, dueDate: string) => {
+  const addTask = useCallback((name: string, subject: string, dueDate: string, priority: Task['priority'] = 'medium', description?: string) => {
     const task: Task = {
       id: crypto.randomUUID(),
       name: name.trim(),
@@ -45,8 +48,14 @@ export function useTasks() {
       dueDate,
       completed: false,
       createdAt: new Date().toISOString(),
+      priority,
+      description,
     };
     update([...loadTasks(), task]);
+  }, [update]);
+
+  const editTask = useCallback((id: string, updates: Partial<Omit<Task, 'id' | 'createdAt'>>) => {
+    update(loadTasks().map(t => t.id === id ? { ...t, ...updates } : t));
   }, [update]);
 
   const toggleComplete = useCallback((id: string) => {
@@ -69,5 +78,21 @@ export function useTasks() {
     return [...new Set(tasks.map(t => t.subject))].sort();
   }, [tasks]);
 
-  return { tasks, activeTasks, completedTasks, addTask, toggleComplete, deleteTask, progress, subjects };
+  const todayTasks = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return activeTasks.filter(t => t.dueDate === today);
+  }, [activeTasks]);
+
+  const overdueTasks = useMemo(() => {
+    return activeTasks.filter(t => getUrgency(t.dueDate) === 'overdue');
+  }, [activeTasks]);
+
+  const upcomingTasks = useMemo(() => {
+    return activeTasks
+      .filter(t => getUrgency(t.dueDate) !== 'overdue')
+      .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+      .slice(0, 5);
+  }, [activeTasks]);
+
+  return { tasks, activeTasks, completedTasks, addTask, editTask, toggleComplete, deleteTask, progress, subjects, todayTasks, overdueTasks, upcomingTasks };
 }
