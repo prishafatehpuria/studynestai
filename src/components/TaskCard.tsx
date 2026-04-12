@@ -1,7 +1,7 @@
 import { Task } from '@/types/task';
 import { getUrgency } from '@/hooks/useTasks';
 import { format } from 'date-fns';
-import { Check, Trash2, Clock, AlertTriangle, AlertCircle, Leaf } from 'lucide-react';
+import { Check, Trash2, Clock, AlertTriangle, AlertCircle, Leaf, ArrowUp, ArrowRight, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ interface Props {
   task: Task;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit?: (id: string, updates: Partial<Omit<Task, 'id' | 'createdAt'>>) => void;
 }
 
 const urgencyConfig = {
@@ -43,9 +44,16 @@ const urgencyConfig = {
   },
 };
 
+const priorityConfig = {
+  high: { icon: ArrowUp, color: 'text-urgent', label: 'High' },
+  medium: { icon: ArrowRight, color: 'text-warning', label: 'Med' },
+  low: { icon: ArrowDown, color: 'text-success', label: 'Low' },
+};
+
 export function TaskCard({ task, onToggle, onDelete }: Props) {
   const urgency = task.completed ? null : getUrgency(task.dueDate);
   const config = urgency ? urgencyConfig[urgency] : null;
+  const prio = priorityConfig[task.priority || 'medium'];
 
   return (
     <motion.div
@@ -87,6 +95,12 @@ export function TaskCard({ task, onToggle, onDelete }: Props) {
           <span className="text-muted-foreground font-body">
             {format(new Date(task.dueDate + 'T00:00:00'), 'MMM d, yyyy')}
           </span>
+          {!task.completed && (
+            <span className={cn("inline-flex items-center gap-0.5 font-body text-xs font-medium", prio.color)}>
+              <prio.icon className="h-3 w-3" />
+              {prio.label}
+            </span>
+          )}
           {config && (
             <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold", config.badge)}>
               <config.Icon className="h-3 w-3" />
