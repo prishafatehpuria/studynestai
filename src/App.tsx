@@ -7,9 +7,11 @@ import { AppLayout } from "@/components/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import CalendarView from "./pages/CalendarView";
-import StudyTimer from "./pages/StudyTimer";
+import FocusMode from "./pages/FocusMode";
 import Notes from "./pages/Notes";
 import ProgressPage from "./pages/ProgressPage";
+import Goals from "./pages/Goals";
+import Achievements from "./pages/Achievements";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,9 +27,11 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/timer" element={<StudyTimer />} />
+            <Route path="/focus" element={<FocusMode />} />
             <Route path="/notes" element={<Notes />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/goals" element={<Goals />} />
+            <Route path="/achievements" element={<Achievements />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

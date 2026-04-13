@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTasks } from '@/hooks/useTasks';
+import { useGamification } from '@/hooks/useGamification';
 import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { TaskCard } from '@/components/TaskCard';
 import { AnimatePresence } from 'framer-motion';
@@ -9,8 +10,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Tasks() {
   const { activeTasks, completedTasks, addTask, editTask, toggleComplete, deleteTask, subjects } = useTasks();
+  const { addPoints, POINT_VALUES } = useGamification();
   const [subjectFilter, setSubjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
+
+  const handleToggle = (id: string) => {
+    const task = [...activeTasks, ...completedTasks].find(t => t.id === id);
+    if (task && !task.completed) {
+      const pts = task.priority === 'high' ? POINT_VALUES.task_high : task.priority === 'low' ? POINT_VALUES.task_low : POINT_VALUES.task_medium;
+      addPoints(pts, 'task');
+    }
+    toggleComplete(id);
+  };
 
   const filteredActive = useMemo(() => {
     let list = activeTasks;
@@ -27,7 +38,6 @@ export default function Tasks() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      {/* Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <AddTaskDialog onAdd={addTask} subjects={subjects} />
         <div className="flex flex-wrap items-center gap-2">
@@ -39,9 +49,7 @@ export default function Tasks() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All subjects</SelectItem>
-                {subjects.map(s => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
+                {subjects.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
           )}
@@ -74,7 +82,7 @@ export default function Tasks() {
           ) : (
             <AnimatePresence mode="popLayout">
               {filteredActive.map(task => (
-                <TaskCard key={task.id} task={task} onToggle={toggleComplete} onDelete={deleteTask} onEdit={editTask} />
+                <TaskCard key={task.id} task={task} onToggle={handleToggle} onDelete={deleteTask} onEdit={editTask} />
               ))}
             </AnimatePresence>
           )}
@@ -85,7 +93,7 @@ export default function Tasks() {
           ) : (
             <AnimatePresence mode="popLayout">
               {filteredCompleted.map(task => (
-                <TaskCard key={task.id} task={task} onToggle={toggleComplete} onDelete={deleteTask} onEdit={editTask} />
+                <TaskCard key={task.id} task={task} onToggle={handleToggle} onDelete={deleteTask} onEdit={editTask} />
               ))}
             </AnimatePresence>
           )}

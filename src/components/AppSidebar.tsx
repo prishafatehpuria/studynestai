@@ -2,10 +2,12 @@ import {
   LayoutDashboard,
   ListTodo,
   CalendarDays,
-  Timer,
+  Zap,
   StickyNote,
   BarChart3,
   BookOpen,
+  Target,
+  Trophy,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -13,6 +15,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
@@ -21,19 +24,23 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-const navItems = [
+const mainItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Tasks', url: '/tasks', icon: ListTodo },
   { title: 'Calendar', url: '/calendar', icon: CalendarDays },
-  { title: 'Study Timer', url: '/timer', icon: Timer },
+  { title: 'Goals', url: '/goals', icon: Target },
+  { title: 'Focus Mode', url: '/focus', icon: Zap },
   { title: 'Notes', url: '/notes', icon: StickyNote },
+];
+
+const insightItems = [
   { title: 'Progress', url: '/progress', icon: BarChart3 },
+  { title: 'Achievements', url: '/achievements', icon: Trophy },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
-  const location = useLocation();
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
@@ -51,9 +58,10 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          {!collapsed && <SidebarGroupLabel className="font-body text-xs text-muted-foreground px-3">Menu</SidebarGroupLabel>}
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
@@ -63,9 +71,28 @@ export function AppSidebar() {
                       activeClassName="bg-sidebar-accent text-primary font-semibold"
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
-                      {!collapsed && (
-                        <span className="font-body text-sm">{item.title}</span>
-                      )}
+                      {!collapsed && <span className="font-body text-sm">{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          {!collapsed && <SidebarGroupLabel className="font-body text-xs text-muted-foreground px-3">Insights</SidebarGroupLabel>}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {insightItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.url}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-colors hover:bg-sidebar-accent"
+                      activeClassName="bg-sidebar-accent text-primary font-semibold"
+                    >
+                      <item.icon className="h-5 w-5 shrink-0" />
+                      {!collapsed && <span className="font-body text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
