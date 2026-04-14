@@ -1,17 +1,21 @@
+import { useState } from 'react';
 import { useTasks, getUrgency } from '@/hooks/useTasks';
 import { useStudySessions } from '@/hooks/useStudySessions';
 import { useGamification } from '@/hooks/useGamification';
 import { useGoals } from '@/hooks/useGoals';
+import { useAIChat } from '@/hooks/useAIChat';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { format } from 'date-fns';
 import {
   CheckCircle2, Clock, AlertTriangle, ListTodo,
-  TrendingUp, CalendarDays, Timer, Flame, Star, Target, Zap
+  TrendingUp, CalendarDays, Timer, Flame, Star, Target, Zap, Sparkles, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
 
 const urgencyColors = {
   overdue: 'text-urgent',
