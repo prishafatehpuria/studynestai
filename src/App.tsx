@@ -12,6 +12,7 @@ import Notes from "./pages/Notes";
 import ProgressPage from "./pages/ProgressPage";
 import Goals from "./pages/Goals";
 import Achievements from "./pages/Achievements";
+import AIAssistant from "./pages/AIAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/achievements" element={<Achievements />} />
+            <Route path="/ai" element={<AIAssistant />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
