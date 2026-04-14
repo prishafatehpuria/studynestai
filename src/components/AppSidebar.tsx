@@ -9,6 +9,8 @@ import {
   Target,
   Trophy,
   Sparkles,
+  Layers,
+  Brain,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -32,6 +34,8 @@ const mainItems = [
   { title: 'Goals', url: '/goals', icon: Target },
   { title: 'Focus Mode', url: '/focus', icon: Zap },
   { title: 'Notes', url: '/notes', icon: StickyNote },
+  { title: 'Flashcards', url: '/flashcards', icon: Layers },
+  { title: 'Quiz Game', url: '/quiz', icon: Brain },
   { title: 'AI Assistant', url: '/ai', icon: Sparkles },
 ];
 
