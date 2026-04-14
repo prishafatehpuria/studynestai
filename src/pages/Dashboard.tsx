@@ -235,6 +235,54 @@ export default function Dashboard() {
         </motion.div>
       )}
 
+      {/* AI Study Suggestion */}
+      <motion.div variants={item}>
+        <Card className="shadow-sm border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 font-heading text-base">
+              <Sparkles className="h-4 w-4 text-primary" /> AI Study Assistant
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!aiRequested ? (
+              <div className="flex flex-col items-center gap-3 py-2">
+                <p className="font-body text-sm text-muted-foreground text-center">
+                  Let AI analyze your tasks and suggest what to study today
+                </p>
+                <Button onClick={getAISuggestion} className="gap-2 font-body text-sm">
+                  <Sparkles className="h-4 w-4" /> Get Study Plan
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {aiLoading && aiMessages.filter(m => m.role === 'assistant').length === 0 ? (
+                  <div className="flex items-center gap-2 py-4 justify-center">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="font-body text-sm text-muted-foreground">Analyzing your schedule...</span>
+                  </div>
+                ) : (
+                  <>
+                    {aiMessages.filter(m => m.role === 'assistant').slice(-1).map(msg => (
+                      <div key={msg.id} className="prose prose-sm max-w-none font-body text-sm dark:prose-invert">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ))}
+                    <div className="flex gap-2 pt-2">
+                      <Button variant="outline" size="sm" onClick={getAISuggestion} disabled={aiLoading} className="gap-1 font-body text-xs">
+                        <Sparkles className="h-3 w-3" /> Refresh
+                      </Button>
+                      <Link to="/ai">
+                        <Button variant="ghost" size="sm" className="font-body text-xs">Open AI Chat →</Button>
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Quick Actions */}
       <motion.div variants={item} className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
