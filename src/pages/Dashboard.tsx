@@ -37,7 +37,20 @@ export default function Dashboard() {
   const { tasks, activeTasks, completedTasks, progress, todayTasks, overdueTasks, upcomingTasks } = useTasks();
   const { totalMinutesToday, totalMinutesWeek } = useStudySessions();
   const { data: gamData, levelProgress } = useGamification();
-  const { activeGoals, getGoalProgress } = useGoals();
+  const { activeGoals, getGoalProgress, goals } = useGoals();
+  const { messages: aiMessages, isLoading: aiLoading, sendMessage: sendAI } = useAIChat();
+  const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
+  const [aiRequested, setAiRequested] = useState(false);
+
+  const getAISuggestion = () => {
+    if (aiLoading) return;
+    setAiRequested(true);
+    const ctx = {
+      tasks: activeTasks.map(t => ({ name: t.name, subject: t.subject, dueDate: t.dueDate, priority: t.priority })),
+      goals: goals.filter(g => g.status === 'active').map(g => ({ title: g.title, subject: g.subject, targetDate: g.targetDate })),
+    };
+    sendAI('What should I study today? Give me a concise 3-4 bullet point plan for the next 2 hours.', 'suggest_study', ctx);
+  };
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="mx-auto max-w-5xl space-y-6">
