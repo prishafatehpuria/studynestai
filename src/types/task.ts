@@ -73,3 +73,58 @@ export interface GamificationData {
   totalPomodoroSessions: number;
   achievements: string[]; // achievement IDs
 }
+
+// Flashcard types
+export type FlashcardType = 'definition' | 'question' | 'fill_blank';
+
+export interface Flashcard {
+  id: string;
+  type: FlashcardType;
+  front: string;
+  back: string;
+  subject: string;
+  sourceNoteId?: string;
+  createdAt: string;
+  // Spaced repetition fields
+  easeFactor: number;      // SM-2 ease factor (default 2.5)
+  interval: number;        // days until next review
+  repetitions: number;     // successful reviews in a row
+  nextReviewDate: string;  // ISO date
+  lastReviewDate?: string;
+  mastery: 'new' | 'learning' | 'reviewing' | 'mastered';
+}
+
+export interface FlashcardDeck {
+  id: string;
+  name: string;
+  subject: string;
+  cards: Flashcard[];
+  createdAt: string;
+}
+
+// Quiz types
+export type QuizQuestionType = 'mcq' | 'true_false' | 'short_answer';
+
+export interface QuizQuestion {
+  id: string;
+  type: QuizQuestionType;
+  question: string;
+  options?: string[];       // for MCQ
+  correctAnswer: string;
+  explanation?: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  subject: string;
+}
+
+export interface QuizResult {
+  id: string;
+  date: string;
+  subject: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  accuracy: number;
+  xpEarned: number;
+  streak: number;
+  timeTaken: number; // seconds
+  questions: { questionId: string; userAnswer: string; correct: boolean }[];
+}
