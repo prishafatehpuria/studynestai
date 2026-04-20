@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ReactMarkdown from 'react-markdown';
+import { Markdown } from '@/components/Markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Send, Square, Trash2, Bot, User, GraduationCap, Users,
@@ -178,7 +178,7 @@ export default function AIAssistant() {
                   >
                     {msg.role === 'assistant' ? (
                       <div className="prose prose-sm max-w-none font-body text-sm dark:prose-invert">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <Markdown>{msg.content}</Markdown>
                       </div>
                     ) : (
                       <p className="font-body text-sm whitespace-pre-wrap">{msg.content}</p>

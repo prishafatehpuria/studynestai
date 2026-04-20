@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
+import { Markdown } from '@/components/Markdown';
 
 const urgencyColors = {
   overdue: 'text-urgent',
@@ -264,7 +264,7 @@ export default function Dashboard() {
                   <>
                     {aiMessages.filter(m => m.role === 'assistant').slice(-1).map(msg => (
                       <div key={msg.id} className="prose prose-sm max-w-none font-body text-sm dark:prose-invert">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <Markdown>{msg.content}</Markdown>
                       </div>
                     ))}
                     <div className="flex gap-2 pt-2">

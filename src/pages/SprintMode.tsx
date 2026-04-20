@@ -9,7 +9,7 @@ import {
   Rocket, Plus, X, Play, BookOpen, Brain, RotateCcw, CheckCircle2,
   Trophy, Loader2, Lock, Timer, AlertTriangle, Sparkles, ChevronRight,
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import { Markdown } from '@/components/Markdown';
 import { toast } from 'sonner';
 import { useGamification } from '@/hooks/useGamification';
 import { cn } from '@/lib/utils';
@@ -668,7 +668,7 @@ export default function SprintMode() {
             <Card>
               <CardContent className="p-6">
                 <div className="prose prose-sm max-w-none font-body dark:prose-invert">
-                  <ReactMarkdown>{ch.content.revision}</ReactMarkdown>
+                  <Markdown>{ch.content.revision}</Markdown>
                 </div>
                 <Button onClick={advancePhase} className="mt-6 w-full gap-2" size="lg">
                   Start Quiz <ChevronRight className="h-4 w-4" />
@@ -744,7 +744,7 @@ export default function SprintMode() {
                   </Badge>
                 </div>
                 <div className="prose prose-sm max-w-none font-body dark:prose-invert">
-                  <ReactMarkdown>{ch.content.recap}</ReactMarkdown>
+                  <Markdown>{ch.content.recap}</Markdown>
                 </div>
                 <Button onClick={advancePhase} className="w-full gap-2" size="lg">
                   {activeIdx + 1 < chapters.length ? 'Unlock Next Chapter' : 'Start Final Test'}
