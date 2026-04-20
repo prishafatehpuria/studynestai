@@ -37,9 +37,116 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, mode = "chat", context } = await req.json();
+    const body = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Sprint Mode: structured, non-streaming JSON output for chapter content
+    if (body.action === "sprint_chapter" || body.action === "sprint_final") {
+      const isFinal = body.action === "sprint_final";
+      const systemPrompt = isFinal
+        ? `You are an exam coach. Generate a balanced final mixed test covering ALL provided chapters. Return ONLY valid JSON matching the schema, no markdown.`
+        : `You are an expert revision coach building a 17-minute sprint for ONE chapter. Create: (1) ultra-condensed revision notes (10-15 min read, key concepts only, markdown with headings + bullets), (2) a 5-minute quiz (5 MCQs, mix of easy/medium/hard), (3) a 2-minute rapid recap (key points + common mistakes, markdown). Return ONLY valid JSON, no markdown wrappers.`;
+
+      const userPrompt = isFinal
+        ? `Create a 10-question mixed final test from these chapters: ${JSON.stringify(body.chapters)}. Subject: ${body.subject || "General"}.`
+        : `Chapter: "${body.chapter}". Subject: ${body.subject || "General"}. ${body.notes ? `Reference notes: ${body.notes}` : "Use general knowledge for this chapter topic."}`;
+
+      const schema = isFinal
+        ? {
+            name: "build_final_test",
+            description: "Build a mixed final test",
+            parameters: {
+              type: "object",
+              properties: {
+                questions: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      question: { type: "string" },
+                      options: { type: "array", items: { type: "string" }, minItems: 4, maxItems: 4 },
+                      correctAnswer: { type: "string" },
+                      explanation: { type: "string" },
+                      chapter: { type: "string" },
+                      difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+                    },
+                    required: ["question", "options", "correctAnswer", "explanation", "chapter", "difficulty"],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ["questions"],
+              additionalProperties: false,
+            },
+          }
+        : {
+            name: "build_chapter_sprint",
+            description: "Build sprint content for one chapter",
+            parameters: {
+              type: "object",
+              properties: {
+                revision: { type: "string", description: "Markdown ultra-condensed revision (10-15 min)" },
+                quiz: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      question: { type: "string" },
+                      options: { type: "array", items: { type: "string" }, minItems: 4, maxItems: 4 },
+                      correctAnswer: { type: "string" },
+                      explanation: { type: "string" },
+                      difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+                    },
+                    required: ["question", "options", "correctAnswer", "explanation", "difficulty"],
+                    additionalProperties: false,
+                  },
+                  minItems: 5,
+                  maxItems: 5,
+                },
+                recap: { type: "string", description: "Markdown 2-min rapid recap with key points + common mistakes" },
+              },
+              required: ["revision", "quiz", "recap"],
+              additionalProperties: false,
+            },
+          };
+
+      const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          tools: [{ type: "function", function: schema }],
+          tool_choice: { type: "function", function: { name: schema.name } },
+        }),
+      });
+
+      if (!aiResp.ok) {
+        if (aiResp.status === 429) {
+          return new Response(JSON.stringify({ error: "Rate limit exceeded. Try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        if (aiResp.status === 402) {
+          return new Response(JSON.stringify({ error: "AI credits exhausted. Add funds in workspace settings." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        const t = await aiResp.text();
+        console.error("AI error", aiResp.status, t);
+        return new Response(JSON.stringify({ error: "AI service error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      const data = await aiResp.json();
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      if (!toolCall?.function?.arguments) {
+        return new Response(JSON.stringify({ error: "AI returned no structured output" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const parsed = JSON.parse(toolCall.function.arguments);
+      return new Response(JSON.stringify(parsed), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const { messages, mode = "chat", context } = body;
 
     const systemPrompt = MODES[mode] || MODES.chat;
     let contextMessage = "";
