@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+#lovable-badge,
+#lovable-badge-mobile {
+  display: none !important;
+}
+
 @layer base {
   :root {
     --background: 204 100% 97%;
