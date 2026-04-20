@@ -15,6 +15,7 @@ import Achievements from "./pages/Achievements";
 import AIAssistant from "./pages/AIAssistant";
 import Flashcards from "./pages/Flashcards";
 import QuizMode from "./pages/QuizMode";
+import SprintMode from "./pages/SprintMode";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/ai" element={<AIAssistant />} />
             <Route path="/flashcards" element={<Flashcards />} />
             <Route path="/quiz" element={<QuizMode />} />
+            <Route path="/sprint" element={<SprintMode />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

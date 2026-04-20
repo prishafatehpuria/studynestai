@@ -11,6 +11,7 @@ import {
   Sparkles,
   Layers,
   Brain,
+  Rocket,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -36,6 +37,7 @@ const mainItems = [
   { title: 'Notes', url: '/notes', icon: StickyNote },
   { title: 'Flashcards', url: '/flashcards', icon: Layers },
   { title: 'Quiz Game', url: '/quiz', icon: Brain },
+  { title: 'Sprint Mode', url: '/sprint', icon: Rocket },
   { title: 'AI Assistant', url: '/ai', icon: Sparkles },
 ];
 

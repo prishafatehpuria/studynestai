@@ -195,7 +195,7 @@ export default function SprintMode() {
           return c;
         }),
       );
-      addPoints(20);
+      addPoints(20, 'task');
       if (activeIdx + 1 < chapters.length) {
         const next = activeIdx + 1;
         setActiveIdx(next);
@@ -293,7 +293,7 @@ export default function SprintMode() {
         (acc, a, i) => (a === finalQuestions[i]?.correctAnswer ? acc + 1 : acc),
         0,
       );
-      addPoints(finalCorrect * 5);
+      addPoints(finalCorrect * 5, 'task');
       setPhase('summary');
     }
   }
