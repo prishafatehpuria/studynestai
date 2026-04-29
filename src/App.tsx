@@ -28,22 +28,31 @@ const TrackedRoutes = () => {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/analytics" element={<Analytics />} />
         <Route path="/tasks" element={<Tasks />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/focus" element={<FocusMode />} />
-            <Route path="/notes" element={<Notes />} />
-            <Route path="/progress" element={<ProgressPage />} />
-            <Route path="/goals" element={<Goals />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/ai" element={<AIAssistant />} />
-            <Route path="/flashcards" element={<Flashcards />} />
-            <Route path="/quiz" element={<QuizMode />} />
-            <Route path="/sprint" element={<SprintMode />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Route path="/calendar" element={<CalendarView />} />
+        <Route path="/focus" element={<FocusMode />} />
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/progress" element={<ProgressPage />} />
+        <Route path="/goals" element={<Goals />} />
+        <Route path="/achievements" element={<Achievements />} />
+        <Route path="/ai" element={<AIAssistant />} />
+        <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/quiz" element={<QuizMode />} />
+        <Route path="/sprint" element={<SprintMode />} />
+        <Route path="/analytics" element={<Analytics />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <TrackedRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
