@@ -12,6 +12,7 @@ import {
   Layers,
   Brain,
   Rocket,
+  Activity,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -44,6 +45,7 @@ const mainItems = [
 const insightItems = [
   { title: 'Progress', url: '/progress', icon: BarChart3 },
   { title: 'Achievements', url: '/achievements', icon: Trophy },
+  { title: 'Analytics', url: '/analytics', icon: Activity },
 ];
 
 export function AppSidebar() {

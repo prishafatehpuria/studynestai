@@ -16,9 +16,35 @@ import AIAssistant from "./pages/AIAssistant";
 import Flashcards from "./pages/Flashcards";
 import QuizMode from "./pages/QuizMode";
 import SprintMode from "./pages/SprintMode";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
+import { useSessionTracking } from "@/hooks/useSessionTracking";
 
 const queryClient = new QueryClient();
+
+const TrackedRoutes = () => {
+  useSessionTracking();
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/calendar" element={<CalendarView />} />
+        <Route path="/focus" element={<FocusMode />} />
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/progress" element={<ProgressPage />} />
+        <Route path="/goals" element={<Goals />} />
+        <Route path="/achievements" element={<Achievements />} />
+        <Route path="/ai" element={<AIAssistant />} />
+        <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/quiz" element={<QuizMode />} />
+        <Route path="/sprint" element={<SprintMode />} />
+        <Route path="/analytics" element={<Analytics />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -26,23 +52,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/calendar" element={<CalendarView />} />
-            <Route path="/focus" element={<FocusMode />} />
-            <Route path="/notes" element={<Notes />} />
-            <Route path="/progress" element={<ProgressPage />} />
-            <Route path="/goals" element={<Goals />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/ai" element={<AIAssistant />} />
-            <Route path="/flashcards" element={<Flashcards />} />
-            <Route path="/quiz" element={<QuizMode />} />
-            <Route path="/sprint" element={<SprintMode />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <TrackedRoutes />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
