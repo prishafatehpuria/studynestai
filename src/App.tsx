@@ -16,19 +16,20 @@ import AIAssistant from "./pages/AIAssistant";
 import Flashcards from "./pages/Flashcards";
 import QuizMode from "./pages/QuizMode";
 import SprintMode from "./pages/SprintMode";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
+import { useSessionTracking } from "@/hooks/useSessionTracking";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
+const TrackedRoutes = () => {
+  useSessionTracking();
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/tasks" element={<Tasks />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/calendar" element={<CalendarView />} />
             <Route path="/focus" element={<FocusMode />} />
